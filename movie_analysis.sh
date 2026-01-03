@@ -26,15 +26,14 @@
 (
  head -n 1 movies_cleaned.csv
  
- awk 'match($0, /,[0-9][0-9]*\/[0-9][0-9]*\/[0-9][0-9],/) {
-  date = substr($0, RSTART+1, RLENGTH-2)
-    split(date, d, "/")
+ awk -F ',' '
+  NR > 1 {
+    split($16, d, "/")
     
-    yy = d[3] + 0
-    if (yy < 20) 
-        yyyy = 2000 + yy
+    if (d[3] < 20) 
+        yyyy = 2000 + d[3]
     else
-        yyyy = 1900 + yy
+        yyyy = 1900 + d[3]
         
     printf "%04d %02d %02d\t%s\n", yyyy, d[1], d[2], $0
  }
@@ -42,7 +41,6 @@
  sort -k1,1nr -k2,2nr -k3,3nr |
  cut -f2- 
 ) > q1.csv
-
 
 # Q2. Find all movies that have vote average > 7.5
 (
